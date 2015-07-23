@@ -16,7 +16,6 @@ function SystemProperty(ret_) {
   };
   this._gConf = {};
   this._lConf = {};
-  this.__init = false;
   event.EventEmitter.call(this);
 
   this._loadPropertyList(function(err) {
@@ -58,29 +57,16 @@ SystemProperty.prototype._loadPropertyList = function(callback_) {
     }
   }], function(err_, rets_) {
     if (err_) return cb_('Fail to load property list: ' + err_);
-    _this.__init = true;
-    _this.__emit('init');
     cb_(null);
   });
 }
 
-SystemProperty.prototype.__emit = function(event) {
-  var listeners = this.listeners(event);
-  for (var i = 0; i < listeners.length; ++i) {
-    if (listeners[i] == this.set) {
-      this.set.apply(this, initPera['set']);
-    } else if (listeners[i] == this.get) {
-      this.get.apply(this, initPera['get']);
-    } else {}
-  }
-  this.removeAllListeners('init');
-}
-
-SystemProperty.prototype.notify = function(event_, property_) {
+SystemProperty.prototype.notify = function(event_, property_,value_) {
   stub.notify(event_, {
     Data: {
       event: event_,
-      property: property_
+      property: property_,
+      value:value_ 
     }
   });
 }
@@ -90,7 +76,6 @@ function hasPermission () {
 }
 
 SystemProperty.prototype.set = function(key, value, callback_) {
-  if (!this.__init) return this.on('init', this.set);
   var cb_ = callback_ || function() {};
   //permission  determination
   if (!hasPermission()) return cb_('you have no permission!');
@@ -106,7 +91,7 @@ SystemProperty.prototype.set = function(key, value, callback_) {
         var _this = this;
         json4line.writeJSONFile(localPath, this._lConf, function(err_) {
           if (err_) return cb_(err_);
-          _this.notify('change', key);
+          _this.notify('change', key, value);
           cb_(null);
         });
       }
@@ -117,17 +102,13 @@ SystemProperty.prototype.set = function(key, value, callback_) {
     var _this = this;
     json4line.writeJSONFile(localPath, this._lConf, function(err_) {
       if (err_) return cb_(err_);
-      _this.notify('add', key);
+      _this.notify('add', key, value);
       cb_(null);
     });
   }
 }
 
 SystemProperty.prototype.get = function(key, callback_) {
-  if (!this.__init) {
-    initPera['get'] = arguments;
-    return this.on('init', this.get);
-  }
   var cb_ = callback_ || function() {};
   if (this._lConf.hasOwnProperty(key)) {
     ret = this._lConf[key];
