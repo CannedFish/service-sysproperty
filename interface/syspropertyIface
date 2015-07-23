@@ -1,0 +1,16 @@
+{
+ "service": "sysproperty",
+  "remote": "false",
+  "interfaces": [
+    {
+      "name": "set",
+      "in": ["Object"],
+       "show": "l"
+    },
+    {
+      "name": "get",
+      "in": ["String"],
+       "show": "l"
+    }
+  ]
+}
