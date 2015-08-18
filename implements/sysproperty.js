@@ -126,7 +126,7 @@ var stub = null;
 (function main() {
   var syspropertyMgr = new SystemProperty({
     success: function() {
-      stub = require('../interface/syspropertyStub').getStub(syspropertyMgr);
+      stub = require('../interface/stub').getStub(syspropertyMgr);
       console.log('system property manager start OK');
     },
     fail: function(reason) {

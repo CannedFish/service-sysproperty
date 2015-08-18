@@ -2,7 +2,7 @@
   "name": "sysproperty",
   "version": "0.1.0",
   "description": "this is service for system property.",
-  "main": "implements/sysproperty.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
